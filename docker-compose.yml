@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - data-mongo-db:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: passw0rd
+    ports:
+      - 27017:27017
+    networks:
+      myriad:
+        ipv4_address: 172.27.1.5
+        aliases:
+          - mongo
+
+  mongo-express:
+    image: mongo-express
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: passw0rd
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongo
+    networks:
+      myriad:
+        ipv4_address: 172.27.1.6
+        aliases:
+          - monog-express
+
+volumes: 
+  data-mongo-db:
+
+networks:
+  myriad:
+    external: true
